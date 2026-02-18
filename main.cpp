@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 
+#define PI 3.1415926535898
 int main()
 {
     glfwInit();
@@ -18,9 +19,8 @@ int main()
     Rect plane = Rect(Vector2(-1, 1), 2, 2);
 
     float fov = 45;
-    float fovRads = fov * M_PI/180;
-    float cameraDistance = 1/tan(fovRads/2);
-
+    float fovRads = fov * PI/180;
+    float cameraDistance = 1.0/tan(fovRads/2);
     Vector3 lightPos(0, 0, 0);
 
     std::vector<Sphere> spheres = {
@@ -48,7 +48,6 @@ int main()
             strcat(sphereName, "]\0");
             shader.setSphere(sphereName, spheres[i]);
         }
-
         shader.setInt("planeCount", planes.size());
         for(int i = 0; i < planes.size(); i++)
         {

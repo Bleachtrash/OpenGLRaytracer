@@ -52,8 +52,8 @@ RaycastResult SphereRaycast(Sphere sphere, Ray ray)
     float t_1 = ( -b + sqrt(b*b - 4*a*c) )/2*a;
     float t_2 = ( -b - sqrt(b*b - 4*a*c) )/2*a;
 
-    if(t_1 < 0 || t_2 < 0 || t_1!=t_1)
-        return result;
+    if(t_1 < 0 || t_2 < 0 || isnan(t_1) || isnan(t_2))
+        return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0));
     
     float t = min(t_1, t_2);
 
@@ -117,8 +117,9 @@ vec3 getColor()
             closestResult.color = vec3(0, 0, 0);
         }
         closestResult.color = closestResult.color * dot(closestResult.normal, normalize(lightDir));
+        return closestResult.color;
     }
-    return closestResult.color;
+    return vec3(0, 0, 0);
 }
 
 void main()
