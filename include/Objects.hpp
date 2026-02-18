@@ -71,13 +71,15 @@ struct Sphere
     Vector3 center;
     float radius;
     Vector3 color;
-    Sphere(Vector3 center, float radius, Vector3 color)
+    float roughness;
+    Sphere(Vector3 center, float radius, Vector3 color, float roughness)
     {
         this->center = center;
         this->radius = radius;
         this->color = color;
+        this->roughness = roughness;
     }
-    Sphere() : Sphere(Vector3(), 0, Vector3()) {}
+    Sphere() : Sphere(Vector3(), 0, Vector3(), 1) {}
 };
 
 struct Plane
@@ -85,10 +87,12 @@ struct Plane
     Vector3 position;
     Vector3 normal;
     Vector3 color;
-    Plane(Vector3 position, Vector3 normal, Vector3 color)
+    float roughness;
+    Plane(Vector3 position, Vector3 normal, Vector3 color, float roughness)
     {
         this->position = position;
         this->normal = normal;
         this->color = color;
+        this->roughness = roughness;
     }
 };
