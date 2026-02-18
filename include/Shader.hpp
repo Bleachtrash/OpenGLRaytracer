@@ -1,9 +1,9 @@
 #pragma once
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <LoadShader.hpp>
 #include <cstring>
 #include <Objects.hpp>
+#include <HelperFuncs.hpp>
 
 struct Shader
 {
