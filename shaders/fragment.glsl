@@ -107,7 +107,7 @@ RaycastResult getClosestResult(Ray ray)
     }
     return closestResult;
 }
-vec3 getReflectedColor(Ray reflectedRay)
+RaycastResult getReflectedResult(Ray reflectedRay)
 {
     RaycastResult closestResult = getClosestResult(reflectedRay);
     if(closestResult.hit)
@@ -120,8 +120,9 @@ vec3 getReflectedColor(Ray reflectedRay)
         }
         closestResult.color = closestResult.color * dot(closestResult.normal, normalize(lightDir));
     }
-    return closestResult.color;
+    return closestResult;
 }
+int reflections = 2;
 vec3 getColor()
 {
     Ray ray = getRay();
@@ -136,8 +137,18 @@ vec3 getColor()
             return vec3(0, 0, 0);
         }
 
-        vec3 reflectionDirection = ray.direction - closestResult.normal * 2*dot(ray.direction, closestResult.normal);
-        closestResult.color = closestResult.color*(closestResult.roughness)  + getReflectedColor(Ray(closestResult.hitPoint, normalize(reflectionDirection)))*(1-closestResult.roughness);
+        vec3 reflectionDirection;// = ray.direction - closestResult.normal * 2*dot(ray.direction, closestResult.normal);
+        vec3 reflectionColor;// = getReflectedColor(Ray(closestResult.hitPoint, normalize(reflectionDirection)));
+        RaycastResult lastResult = closestResult;
+        Ray lastRay = ray;
+        for(int i = 0; i < reflections; i++)
+        {
+            reflectionColor = reflectionColor + lastResult.color*(reflections-i)/reflections;
+            reflectionDirection = lastRay.direction - lastResult.normal * 2*dot(lastRay.direction, lastResult.normal);
+            lastRay = Ray(lastResult.hitPoint, normalize(reflectionDirection));
+            lastResult = getReflectedResult(lastRay);
+        }
+        closestResult.color = closestResult.color*(closestResult.roughness)  + reflectionColor*(1-closestResult.roughness);
         
         closestResult.color = closestResult.color * dot(closestResult.normal, normalize(lightDir));
     }
