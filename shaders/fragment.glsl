@@ -47,6 +47,7 @@ uniform Plane planes[MAX_PLANES];
 RaycastResult SphereRaycast(Sphere sphere, Ray ray)
 {
     RaycastResult result = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
+    RaycastResult result = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
 
     vec3 rayToSphere = ray.origin-sphere.position;
 
@@ -58,7 +59,7 @@ RaycastResult SphereRaycast(Sphere sphere, Ray ray)
     float t_2 = ( -b - sqrt(b*b - 4*a*c) )/2*a;
 
     if(t_1 < 0 || t_2 < 0 || isnan(t_1) || isnan(t_2))
-        return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
+        return result;
     
     float t = min(t_1, t_2);
 
@@ -67,6 +68,7 @@ RaycastResult SphereRaycast(Sphere sphere, Ray ray)
     result.dist = distance(ray.origin, result.hitPoint);
     result.normal = normalize(result.hitPoint-sphere.position);
     result.color = sphere.color;
+    result.roughness = sphere.roughness;
     result.roughness = sphere.roughness;
 
     return result;
@@ -81,7 +83,9 @@ RaycastResult PlaneRaycast(Plane plane, Ray ray)
     if (alpha > 0 && dot(plane.normal, ray.direction) < 0)
     {
         return RaycastResult(true, alpha, ray.origin+ray.direction*alpha, plane.normal, plane.color, plane.roughness);
+        return RaycastResult(true, alpha, ray.origin+ray.direction*alpha, plane.normal, plane.color, plane.roughness);
     }
+    return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
     return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
 }
 Ray getRay()
@@ -90,6 +94,7 @@ Ray getRay()
 }
 RaycastResult getClosestResult(Ray ray)
 {
+    RaycastResult closestResult = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
     RaycastResult closestResult = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
     for(int i = 0; i < sphereCount; i++)
     {
@@ -172,6 +177,7 @@ vec3 getColor()
         closestResult.color = closestResult.color * maxDot;
         closestResult.color = closestResult.color * hitCount/lightCount;
     }
+    return closestResult.color;
     return closestResult.color;
 }
 
