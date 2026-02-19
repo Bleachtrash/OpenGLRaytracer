@@ -28,9 +28,9 @@ int main()
     };
     std::vector<Plane> planes = {
         Plane(Vector3(0, -0.25, 0), Vector3(0, 1, 0), Vector3(1, 1, 1), 1),    // Ground
-        Plane(Vector3(0, 0, -1.25), Vector3(0, 0, 1), Vector3(1, 1, 1), 1),     // Back wall
+        Plane(Vector3(0, 0, -1.25), Vector3(0, 0, 1), Vector3(1, 1, 1), 0.2),     // Back wall
         Plane(Vector3(0, 1, 0), Vector3(0, -1, 0), Vector3(1, 1, 1), 1),       // Ceiling
-        Plane(Vector3(0, 0, 1.25), Vector3(0, 0, -1), Vector3(1, 1, 1), 1),     // Front wall
+        Plane(Vector3(0, 0, 1.25), Vector3(0, 0, -1), Vector3(1, 1, 1), 0.2),     // Front wall
         Plane(Vector3(-1.25, 0, 0), Vector3(1, 0, 0), Vector3(1, 0, 0), 1),    // Left wall
         Plane(Vector3(1.25, 0, 0), Vector3(-1, 0, 0), Vector3(0, 1, 0), 1)     // Right wall
     };

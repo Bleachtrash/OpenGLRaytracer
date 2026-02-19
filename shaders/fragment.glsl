@@ -115,6 +115,7 @@ RaycastResult getClosestResult(Ray ray)
     return closestResult;
 }
 RaycastResult getReflectedResult(Ray reflectedRay)
+RaycastResult getReflectedResult(Ray reflectedRay)
 {
     RaycastResult closestResult = getClosestResult(reflectedRay);
     if(closestResult.hit)
