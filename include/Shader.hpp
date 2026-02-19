@@ -2,6 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <cstring>
+#include <stdio.h>
 #include <Objects.hpp>
 #include <HelperFuncs.hpp>
 
@@ -24,6 +25,7 @@ struct Shader
 
     void setSphere(const char* name, Sphere value);
     void setPlane(const char* name, Plane value);
+    void makeLightGrid(int w, int h, Vector3 centerPos);
 };
 
 void Shader::setFloat(const char* name, const float value)
@@ -77,4 +79,22 @@ void Shader::setPlane(const char* name, Plane value)
     this->setFloat3(position, value.position.x, value.position.y, value.position.z);
     this->setFloat3(normal, value.normal.x, value.normal.y, value.normal.z);
     this->setFloat3(color, value.color.x, value.color.y, value.color.z);
+    this->setFloat(roughness, value.roughness);
+}
+void Shader::makeLightGrid(int w, int h, Vector3 centerPos)
+{
+    float dist = 0.05;
+    centerPos = Vector3(centerPos.x + (float)(w-1)/2*dist, centerPos.y, centerPos.z + (float)(h-1)/2*dist);
+    this->setInt("lightCount", w*h);
+    for(int i = 0; i < h; i++)
+    {
+        for(int j = 0; j < w; j++)
+        {
+            char* name = new char[strlen("lights[]") + strlen(std::to_string(i).c_str()) + 1];
+            strcpy(name, "lights[");
+            strcat(name, std::to_string(i*w+j).c_str());
+            strcat(name, "]\0");
+            this->setFloat3(name, centerPos.x-j*dist, centerPos.y, centerPos.z-i*dist);
+        }
+    }
 }
