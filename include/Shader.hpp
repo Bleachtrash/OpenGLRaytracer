@@ -57,10 +57,14 @@ void Shader::setSphere(const char* name, Sphere value)
     char* color = new char[strlen(name) + strlen(".color") + 1];
     strcpy(color, name);
     strcat(color, ".color\0");
+    char* roughness = new char[strlen(name) + strlen(".roughness") + 1];
+    strcpy(roughness, name);
+    strcat(roughness, ".roughness\0");
 
     this->setFloat3(position, value.center.x, value.center.y, value.center.z);
     this->setFloat(radius, value.radius);
     this->setFloat3(color, value.color.x, value.color.y, value.color.z);
+    this->setFloat(roughness, value.roughness);
 }
 void Shader::setPlane(const char* name, Plane value)
 {
@@ -73,8 +77,12 @@ void Shader::setPlane(const char* name, Plane value)
     char* color = new char[strlen(name) + strlen(".color") + 1];
     strcpy(color, name);
     strcat(color, ".color\0");
+    char* roughness = new char[strlen(name) + strlen(".roughness") + 1];
+    strcpy(roughness, name);
+    strcat(roughness, ".roughness\0");
 
     this->setFloat3(position, value.position.x, value.position.y, value.position.z);
     this->setFloat3(normal, value.normal.x, value.normal.y, value.normal.z);
     this->setFloat3(color, value.color.x, value.color.y, value.color.z);
+    this->setFloat(roughness, value.roughness);
 }

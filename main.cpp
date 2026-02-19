@@ -23,15 +23,15 @@ int main()
     float cameraDistance = 1.0/tan(fovRads/2);
     Vector3 lightPos(0, 0, 0);
 
-    std::vector<Sphere> spheres = {
-        Sphere(Vector3(0, 0, 0), 0.25, Vector3(0, 0, 1))};
+    std::vector<Sphere> spheres = {};
+        // Sphere(Vector3(0, 0, 0), 0.25, Vector3(1, 1, 1), 0.5)};
     std::vector<Plane> planes = {
-        Plane(Vector3(0, -0.25, 0), Vector3(0, 1, 0), Vector3(1, 1, 1)),    // Ground
-        Plane(Vector3(0, 0, -1.25), Vector3(0, 0, 1), Vector3(1, 1, 1)),     // Back wall
-        Plane(Vector3(0, 1, 0), Vector3(0, -1, 0), Vector3(1, 1, 1)),       // Ceiling
-        Plane(Vector3(0, 0, 1.25), Vector3(0, 0, -1), Vector3(1, 1, 1)),     // Front wall
-        Plane(Vector3(-1.25, 0, 0), Vector3(1, 0, 0), Vector3(1, 0, 0)),    // Left wall
-        Plane(Vector3(1.25, 0, 0), Vector3(-1, 0, 0), Vector3(0, 1, 0))};   // Right wall
+        Plane(Vector3(0, -0.25, 0), Vector3(0, 1, 0), Vector3(1, 1, 1), 1),    // Ground
+        Plane(Vector3(0, 0, -1.25), Vector3(0, 0, 1), Vector3(1, 1, 1), 0.2),     // Back wall
+        Plane(Vector3(0, 1, 0), Vector3(0, -1, 0), Vector3(1, 1, 1), 1),       // Ceiling
+        Plane(Vector3(0, 0, 1.25), Vector3(0, 0, -1), Vector3(1, 1, 1), 0.2),     // Front wall
+        Plane(Vector3(-1.25, 0, 0), Vector3(1, 0, 0), Vector3(1, 0, 0), 1),    // Left wall
+        Plane(Vector3(1.25, 0, 0), Vector3(-1, 0, 0), Vector3(0, 1, 0), 1)};   // Right wall
 
     while(!glfwWindowShouldClose(window))
     {
@@ -65,8 +65,8 @@ int main()
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-        lightPos.x = sin(glfwGetTime());
-        lightPos.z = cos(glfwGetTime());
+        // lightPos.x = sin(glfwGetTime());
+        // lightPos.z = cos(glfwGetTime());
     }
     
     glfwDestroyWindow(window);
