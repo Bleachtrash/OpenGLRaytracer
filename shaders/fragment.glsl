@@ -47,7 +47,6 @@ uniform Plane planes[MAX_PLANES];
 RaycastResult SphereRaycast(Sphere sphere, Ray ray)
 {
     RaycastResult result = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
-    RaycastResult result = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
 
     vec3 rayToSphere = ray.origin-sphere.position;
 
@@ -95,7 +94,6 @@ Ray getRay()
 RaycastResult getClosestResult(Ray ray)
 {
     RaycastResult closestResult = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
-    RaycastResult closestResult = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
     for(int i = 0; i < sphereCount; i++)
     {
         RaycastResult sphereResult = SphereRaycast(spheres[i], ray);
@@ -114,7 +112,6 @@ RaycastResult getClosestResult(Ray ray)
     }
     return closestResult;
 }
-RaycastResult getReflectedResult(Ray reflectedRay)
 RaycastResult getReflectedResult(Ray reflectedRay)
 {
     RaycastResult closestResult = getClosestResult(reflectedRay);
@@ -142,7 +139,6 @@ RaycastResult getReflectedResult(Ray reflectedRay)
     }
     return closestResult;
 }
-int reflections = 3;
 vec3 getColor()
 {
     Ray ray = getRay();
