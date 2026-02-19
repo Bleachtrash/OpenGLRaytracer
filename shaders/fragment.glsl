@@ -15,18 +15,21 @@ struct RaycastResult
     vec3  hitPoint;
     vec3  normal;
     vec3  color;
+    float roughness;
 };
 struct Sphere
 {
     vec3  position;
     float radius;
     vec3  color;
+    float roughness;
 };
 struct Plane
 {
     vec3 position;
     vec3 normal;
     vec3 color;
+    float roughness;
 };
 struct Ray
 {
@@ -43,7 +46,7 @@ uniform Plane planes[MAX_PLANES];
 
 RaycastResult SphereRaycast(Sphere sphere, Ray ray)
 {
-    RaycastResult result = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0));
+    RaycastResult result = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
 
     vec3 rayToSphere = ray.origin-sphere.position;
 
@@ -55,7 +58,7 @@ RaycastResult SphereRaycast(Sphere sphere, Ray ray)
     float t_2 = ( -b - sqrt(b*b - 4*a*c) )/2*a;
 
     if(t_1 < 0 || t_2 < 0 || isnan(t_1) || isnan(t_2))
-        return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0));
+        return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
     
     float t = min(t_1, t_2);
 
@@ -64,6 +67,7 @@ RaycastResult SphereRaycast(Sphere sphere, Ray ray)
     result.dist = distance(ray.origin, result.hitPoint);
     result.normal = normalize(result.hitPoint-sphere.position);
     result.color = sphere.color;
+    result.roughness = sphere.roughness;
 
     return result;
 }
@@ -76,9 +80,9 @@ RaycastResult PlaneRaycast(Plane plane, Ray ray)
 
     if (alpha > 0 && dot(plane.normal, ray.direction) < 0)
     {
-        return RaycastResult(true, alpha, ray.origin+ray.direction*alpha, plane.normal, plane.color);
+        return RaycastResult(true, alpha, ray.origin+ray.direction*alpha, plane.normal, plane.color, plane.roughness);
     }
-    return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0));
+    return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
 }
 Ray getRay()
 {
@@ -86,7 +90,7 @@ Ray getRay()
 }
 RaycastResult getClosestResult(Ray ray)
 {
-    RaycastResult closestResult = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0));
+    RaycastResult closestResult = RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
     for(int i = 0; i < sphereCount; i++)
     {
         RaycastResult sphereResult = SphereRaycast(spheres[i], ray);
@@ -151,10 +155,13 @@ vec3 getColor()
             }
         }
 
-        vec3 reflectionDirection = ray.direction - closestResult.normal * 2*dot(ray.direction, closestResult.normal);
-        vec3 reflectionColor = getReflectedResult(Ray(closestResult.hitPoint, normalize(reflectionDirection))).color;
+        if(closestResult.roughness != 1)
+        {
+            vec3 reflectionDirection = ray.direction - closestResult.normal * 2*dot(ray.direction, closestResult.normal);
+            vec3 reflectionColor = getReflectedResult(Ray(closestResult.hitPoint, normalize(reflectionDirection))).color;
 
-        closestResult.color = closestResult.color*(closestResult.roughness)  + reflectionColor*(1-closestResult.roughness);
+            closestResult.color = closestResult.color*(closestResult.roughness)  + reflectionColor*(1-closestResult.roughness);
+        }
         
         float maxDot = 0;
         for(int i = 0; i < lightCount; i++)
@@ -165,7 +172,7 @@ vec3 getColor()
         closestResult.color = closestResult.color * maxDot;
         closestResult.color = closestResult.color * hitCount/lightCount;
     }
-    return vec3(0, 0, 0);
+    return closestResult.color;
 }
 
 void main()
