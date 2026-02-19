@@ -58,7 +58,7 @@ RaycastResult SphereRaycast(Sphere sphere, Ray ray)
     float t_2 = ( -b - sqrt(b*b - 4*a*c) )/2*a;
 
     if(t_1 < 0 || t_2 < 0 || isnan(t_1) || isnan(t_2))
-        return RaycastResult(false, 0, vec3(0, 0, 0), vec3(0, 0, 0), vec3(0, 0, 0), 1);
+        return result;
     
     float t = min(t_1, t_2);
 
@@ -114,29 +114,17 @@ RaycastResult getReflectedResult(Ray reflectedRay)
     RaycastResult closestResult = getClosestResult(reflectedRay);
     if(closestResult.hit)
     {
-        int hitCount = 0;
-        for(int i = 0; i < lightCount; i++)
+        vec3 lightDir = lightPos-closestResult.hitPoint;
+        RaycastResult shadowResult = getClosestResult(Ray(closestResult.hitPoint, normalize(lightDir)));
+        if(shadowResult.hit && shadowResult.dist < length(lightDir) && shadowResult.dist > 0.0005)
         {
-            vec3 lightDir = lights[i]-closestResult.hitPoint;
-            RaycastResult shadowResult = getClosestResult(Ray(closestResult.hitPoint, normalize(lightDir)));
-            if(!(shadowResult.hit && shadowResult.dist < length(lightDir) && shadowResult.dist > 0.0005))
-            {
-                hitCount++;
-            }
+            closestResult.color = vec3(0, 0, 0);
         }
-
-        float maxDot = 0;
-        for(int i = 0; i < lightCount; i++)
-        {
-            float temp = dot(closestResult.normal, normalize(lights[i]-closestResult.hitPoint));
-            maxDot = max(temp, maxDot);
-        }
-        closestResult.color = closestResult.color * maxDot;
-        closestResult.color = closestResult.color * hitCount/lightCount;
+        closestResult.color = closestResult.color * dot(closestResult.normal, normalize(lightDir));
     }
     return closestResult;
 }
-int reflections = 3;
+int reflections = 2;
 vec3 getColor()
 {
     Ray ray = getRay();
@@ -166,11 +154,23 @@ vec3 getColor()
         float maxDot = 0;
         for(int i = 0; i < lightCount; i++)
         {
-            float temp = dot(closestResult.normal, normalize(lights[i]-closestResult.hitPoint));
-            maxDot = max(temp, maxDot);
+            return vec3(0, 0, 0);
         }
-        closestResult.color = closestResult.color * maxDot;
-        closestResult.color = closestResult.color * hitCount/lightCount;
+
+        vec3 reflectionDirection;// = ray.direction - closestResult.normal * 2*dot(ray.direction, closestResult.normal);
+        vec3 reflectionColor;// = getReflectedColor(Ray(closestResult.hitPoint, normalize(reflectionDirection)));
+        RaycastResult lastResult = closestResult;
+        Ray lastRay = ray;
+        for(int i = 0; i < reflections; i++)
+        {
+            reflectionColor = reflectionColor + lastResult.color*(reflections-i)/reflections;
+            reflectionDirection = lastRay.direction - lastResult.normal * 2*dot(lastRay.direction, lastResult.normal);
+            lastRay = Ray(lastResult.hitPoint, normalize(reflectionDirection));
+            lastResult = getReflectedResult(lastRay);
+        }
+        closestResult.color = closestResult.color*(closestResult.roughness)  + reflectionColor*(1-closestResult.roughness);
+        
+        closestResult.color = closestResult.color * dot(closestResult.normal, normalize(lightDir));
     }
     return closestResult.color;
 }
